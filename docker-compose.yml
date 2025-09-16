@@ -1,0 +1,20 @@
+services:
+  ubuntux-landing:
+    image: ghcr.io/fnmalic/ubuntux-landing:latest
+    container_name: ubuntux-landing
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ubuntux-landing.rule=Host(`test.ubuntu-x.com`)"
+      - "traefik.http.routers.ubuntux-landing.entrypoints=websecure"
+      - "traefik.http.routers.ubuntux-landing.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ubuntux-landing.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.landing-headers.headers.customRequestHeaders.X-Forwarded-Proto=https"
+      - "traefik.http.middlewares.landing-headers.headers.customResponseHeaders.X-Frame-Options=DENY"
+      - "traefik.http.middlewares.landing-headers.headers.customResponseHeaders.X-Content-Type-Options=nosniff"
+      - "traefik.http.routers.ubuntux-landing.middlewares=landing-headers"
+    networks:
+      - traefik
+networks:
+  traefik:
+    external: true
